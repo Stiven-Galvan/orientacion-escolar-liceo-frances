@@ -1,0 +1,13 @@
+import { useEffect,useState } from 'react';
+import FormularioEstudiante from '../estudiantes/FormularioEstudiante';
+import type { DatosFormulario } from '../estudiantes/modelos';
+import { mensajeError } from '../estudiantes/modelos';
+import { remision } from './modelosRemision';
+import './Remisiones.css';
+type Preparacion={remision_id:string;existente:{id:string;nombre:string;eliminando:boolean;archivado:boolean}|null;inicial:Partial<DatosFormulario>};
+export default function RegistroDesdeRemision({id,onVolver,onGuardado,onPendientes}:{id:string;onVolver:()=>void;onGuardado:(id:string)=>void;onPendientes:(v:boolean)=>void}){
+ const [datos,setDatos]=useState<Preparacion|null>(null);const [error,setError]=useState('');const [ocupado,setOcupado]=useState(false);const [revision,setRevision]=useState(0);
+ useEffect(()=>{let vigente=true;void remision<Preparacion>('preparar_estudiante',id).then(d=>{if(vigente){setDatos(d);setError('');}}).catch(e=>{if(vigente)setError(mensajeError(e));});return()=>{vigente=false;};},[id,revision]);
+ async function vincular(){if(ocupado)return;setOcupado(true);setError('');try{const d=await remision<{id:string}>('registrar_estudiante',id);onGuardado(d.id);}catch(e){setError(mensajeError(e));}finally{setOcupado(false);}}
+ return <div className="rm-root"><section className="rm-notice"><h2>Registro desde remisión recibida</h2><p>La remisión ya tiene firma de recepción. Completa los datos que faltan; la ficha quedará vinculada al formato firmado.</p></section>{error&&<p className="rm-error" role="alert">{error} <button className="rm-button" onClick={()=>setRevision(v=>v+1)}>Actualizar</button></p>}{!datos?<><p role="status">Preparando el registro…</p><button className="rm-button" onClick={onVolver}>Volver a la remisión</button></>:datos.existente?<section className="rm-card"><h2>Este estudiante ya tiene ficha</h2><p><strong>{datos.existente.nombre}</strong></p><p>Vincula la remisión y abre su expediente para continuar el acompañamiento.</p>{(datos.existente.eliminando||datos.existente.archivado)&&<p className="rm-error">El expediente está archivado o en eliminación. Revísalo con administración antes de vincularlo.</p>}<div className="rm-actions"><button className="rm-button rm-primary" disabled={ocupado||datos.existente.eliminando||datos.existente.archivado} onClick={()=>void vincular()}>{ocupado?'Vinculando…':'Vincular remisión y abrir ficha'}</button><button className="rm-button" disabled={ocupado} onClick={onVolver}>Volver</button></div></section>:<FormularioEstudiante remisionId={id} inicialRemision={datos.inicial} onCancelar={onVolver} onGuardado={onGuardado} onPendientes={onPendientes}/>}</div>;
+}

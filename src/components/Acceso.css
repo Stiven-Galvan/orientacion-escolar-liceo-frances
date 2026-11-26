@@ -1,0 +1,28 @@
+.acceso-fondo { min-height: 100dvh; display: grid; place-items: center; background: #f5f4ee; padding: 28px 16px; box-sizing: border-box; color: #233d36; }
+.acceso-tarjeta { width: 100%; max-width: 460px; padding: 36px; box-sizing: border-box; background: white; border: 1px solid #dfe5df; border-radius: 24px; box-shadow: 0 18px 65px #244b3512; text-align: left; }
+.acceso-logo { display: block; width: 80px; height: 80px; max-width: 80px; object-fit: contain; margin: 0 auto 14px; }
+.acceso-institucion { text-align: center; font-size: 11px; letter-spacing: .12em; color: #805735; }
+.acceso-tarjeta h1 { font-size: 28px; line-height: 1.2; margin: 24px 0 12px; }
+.acceso-tarjeta p { line-height: 1.6; overflow-wrap: anywhere; }
+.acceso-formulario { display: grid; gap: 10px; margin-top: 24px; }
+.acceso-formulario label { font-size: 14px; font-weight: 600; }
+.acceso-formulario input:not([type="checkbox"]) { width: 100%; min-height: 46px; padding: 10px 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #becdc3; background: #fff; color: #1e332b; font: inherit; }
+.acceso-formulario input:focus-visible { outline: 3px solid #8fb5a5; outline-offset: 2px; }
+.acceso-check { display: flex; align-items: center; gap: 8px; margin: 5px 0; }
+.acceso-check input { width: 16px; height: 16px; }
+.acceso-primario, .acceso-secundario { font: inherit; cursor: pointer; border-radius: 10px; padding: 11px 16px; }
+.acceso-primario { background: #235746; color: #fff; border: 1px solid #235746; font-weight: 700; }
+.acceso-secundario { background: #fff; color: #235746; border: 1px solid #b5c8bd; }
+.acceso-primario:disabled, .acceso-secundario:disabled { opacity: .65; cursor: wait; }
+.acceso-error { color: #a12d27; background: #fff0ee; padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+.acceso-ayuda { font-size: 13px; color: #62726b; }
+.acceso-salida { margin-top: 16px; }
+.account .acceso-salida { margin-top: 0; }
+.account .account-role { display: block; color: #62726b; font-size: 13px; }
+.rol-docente .sidebar { background: #253f59; }
+.rol-desarrollador .sidebar { background: #303d39; }
+.developer-control { display: grid; gap: 5px; max-width: 260px; font-size: 12px; color: #41584d; }
+.developer-control select { width: 100%; padding: 9px; border: 1px solid #a9c2b2; border-radius: 9px; background: white; color: #1b4535; font: inherit; }
+.developer-notice { border: 1px solid #b6cfc0; border-radius: 12px; background: #eff7f1; color: #285341; padding: 14px 18px; margin-bottom: 16px; line-height: 1.6; }
+.rol-coordinacion_academica .sidebar, .rol-coordinacion_convivencial .sidebar { background: #59443a; }
+@media(max-width: 650px) { .acceso-tarjeta { padding: 24px; } .account { flex-wrap: wrap; } }

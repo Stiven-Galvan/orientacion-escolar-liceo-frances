@@ -1,0 +1,46 @@
+.estudiantes-modulo, .estudiantes-ficha { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+.estudiantes-panel { padding: 24px; }
+.estudiantes-modulo input, .estudiantes-modulo select { width: 100%; box-sizing: border-box; min-height: 44px; border: 1px solid #bdcec3; border-radius: 9px; padding: 10px 12px; font: inherit; background: white; color: #233e30; }
+.estudiantes-modulo label { display: grid; gap: 8px; font-size: 14px; font-weight: 600; }
+.estudiantes-formulario, .estudiantes-campos { display: grid; gap: 18px; }
+.estudiantes-formulario { margin-top: 24px; }
+.estudiantes-campos { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.estudiantes-formulario fieldset { border: 1px solid #d8e3da; border-radius: 12px; padding: 20px; min-width: 0; }
+.estudiantes-formulario legend { padding: 0 8px; font-weight: 700; color: #315943; }
+.estudiantes-ancho { grid-column: 1 / -1; }
+.estudiantes-modulo .estudiantes-check { display: flex; align-items: center; gap: 10px; }
+.estudiantes-check input { width: 18px; height: 18px; min-height: 0; }
+.estudiantes-ayuda { font-size: 13px; line-height: 1.6; color: #66796c; }
+.estudiantes-acciones, .estudiantes-paginacion { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.estudiantes-cabecera { display: flex; gap: 20px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.estudiantes-filtros { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+.estudiantes-tabla-contenedor { overflow-x: auto; }
+.estudiantes-tabla { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+.estudiantes-tabla th { padding: 14px; background: #eef4ee; color: #395542; }
+.estudiantes-tabla td { padding: 16px 14px; border-bottom: 1px solid #e0e7df; }
+.estudiantes-insignia { display: inline-block; padding: 3px 8px; border-radius: 20px; margin-left: 8px; background: #f2e9d7; color: #6d5530; font-size: 11px; }
+.estudiantes-paginacion { justify-content: flex-end; margin-top: 22px; }
+.estudiantes-datos { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; margin-top: 28px; }
+.estudiantes-datos dt { font-size: 13px; color: #67776d; margin-bottom: 7px; }
+.estudiantes-datos dd { margin: 0; overflow-wrap: anywhere; }
+.estudiantes-matriculas { list-style: none; padding: 0; display: grid; gap: 10px; }
+.estudiantes-matriculas li { display: flex; gap: 20px; padding: 14px; background: #f4f7f0; border-radius: 9px; }
+.estudiantes-expediente { display: grid; grid-template-columns: repeat(auto-fit,minmax(170px,1fr)); gap: 12px; }
+.estudiantes-expediente div { border: 1px solid #dfe6db; border-radius: 10px; padding: 16px; }
+.estudiantes-expediente span { display: block; margin-top: 8px; font-size: 13px; color: #74806f; }
+.estudiantes-historial { list-style: none; padding: 0; display: grid; gap: 18px; }
+.estudiantes-historial > li { border-left: 3px solid #abc7ad; padding: 4px 0 8px 16px; }
+.estudiantes-historial span { display: block; color: #69796e; font-size: 13px; margin-top: 7px; }
+.estudiantes-historial details { margin-top: 12px; font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
+.estudiantes-historial summary { cursor: pointer; color: #315d43; }
+.estudiantes-error, .estudiantes-exito { margin: 0; padding: 14px 18px; border-radius: 10px; line-height: 1.6; }
+.estudiantes-error { color: #9b3428; border: 1px solid #ecc4bb; background: #fff1ed; }
+.estudiantes-exito { color: #2b553a; border: 1px solid #bfdcc2; background: #eff8ed; }
+.estudiantes-modulo button:disabled { opacity: .55; cursor: not-allowed; }
+.estudiantes-modulo :focus-visible { outline: 3px solid #97baa3; outline-offset: 2px; }
+@media(max-width: 850px) { .estudiantes-filtros { grid-template-columns: 1fr 1fr; } .estudiantes-datos { grid-template-columns: 1fr 1fr; } }
+@media(max-width: 550px) { .estudiantes-campos, .estudiantes-filtros, .estudiantes-datos { grid-template-columns: 1fr; } .estudiantes-panel { padding: 18px; } .estudiantes-formulario fieldset { padding: 15px; } }
+.estudiantes-admision { margin-top:20px; border:1px solid #dbe4d8; border-radius:12px; padding:20px; }
+.estudiantes-admision>.personal-peligro { margin-top:16px; }
+.estudiantes-observaciones-privadas { margin-top:18px; padding:14px; border-radius:9px; background:#faf6ed; line-height:1.7; }
+.estudiantes-observaciones-privadas summary { cursor:pointer; font-weight:600; }

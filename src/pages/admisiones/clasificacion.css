@@ -1,0 +1,27 @@
+.en-classification { display: grid; gap: .5rem; margin: 1.25rem 0; padding: .75rem; border: 1px solid #d1d9db; }
+.en-classification legend { font-weight: 700; }
+.en-classification label { display: flex; align-items: center; gap: .75rem; padding: .65rem .85rem; border-radius: .45rem; cursor: pointer; border: 2px solid transparent; font-family: Montserrat, system-ui, sans-serif; }
+.en-classification label:has(input:checked) { border-color: currentColor; }
+.en-classification small { display: block; margin-top: .15rem; color: inherit; }
+.en-class-label { display: inline-block; padding: .4rem .65rem; border-radius: .35rem; }
+.en-class-verde { background: #d9f4e5 !important; color: #075333 !important; }
+.en-class-amarillo { background: #ffefb0 !important; color: #654800 !important; }
+.en-class-azul { background: #dceefa !important; color: #0d4975 !important; }
+.en-class-morado { background: #efdef5 !important; color: #5e2876 !important; }
+.en-class-rojo { background: #fce0e0 !important; color: #862020 !important; }
+
+.en-class-cell { min-width: 12rem; }
+.en-class-control { margin-top: .5rem; }
+.en-class-control .en-classification { margin: .5rem 0; min-width: 0; }
+.en-class-control .en-classification label { padding: .45rem .6rem; }
+
+.en-class-name { padding: .15rem .4rem; max-width: 100%; overflow-wrap: anywhere; }
+.en-table .en-observaciones-row td { padding: 0 12px 14px; }
+.en-observaciones-inline { padding: .9rem 1rem; background: #f5f8f6; border: 1px solid #dce6df; border-radius: .55rem; }
+.en-observaciones-inline h3 { margin: 0 0 .5rem; font-size: .95rem; }
+.en-observaciones-inline .en-private-note { margin: 0 0 .6rem; }
+.en-observaciones-inline .en-section { margin-block: .6rem; }
+
+.en-preview-inline { padding: .8rem 1rem; border: 1px solid #dce6df; border-radius: .55rem; margin-block: .4rem; }
+.en-preview-inline h2 { margin: 0; font-size: 1rem; }
+.en-preview-inline .panel-heading { margin-bottom: .8rem; }

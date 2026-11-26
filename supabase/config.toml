@@ -1,0 +1,8 @@
+[functions.gestionar-personal]
+verify_jwt = true
+
+[functions.preparar-soportes]
+verify_jwt = true
+
+[functions.preparar-evidencias]
+verify_jwt = true

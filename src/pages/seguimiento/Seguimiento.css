@@ -1,0 +1,13 @@
+.oc-section { display: grid; gap: 1rem; padding: 1rem; }
+.oc-heading, .oc-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.oc-heading { justify-content: space-between; }
+.oc-heading h1, .oc-heading h2, .oc-card h3, .oc-form h3 { margin: 0; }
+.oc-card, .oc-form { border: 1px solid #ccd9da; border-radius: .55rem; padding: .85rem; }
+.oc-form { display: grid; gap: .8rem; background: #eff6f6; }
+.oc-card details { margin-top: .65rem; }
+.oc-card li { margin: .55rem 0; }
+.oc-card summary { cursor: pointer; font-weight: 650; }
+.oc-form label, .oc-filter { display: grid; gap: .35rem; }
+.oc-filter { width: fit-content; }
+.oc-form input, .oc-form select, .oc-form textarea, .oc-filter select { padding: .48rem; font: inherit; border: 1px solid #89a3a6; border-radius: .3rem; }
+.oc-texto { white-space: pre-wrap; overflow-wrap: anywhere; }

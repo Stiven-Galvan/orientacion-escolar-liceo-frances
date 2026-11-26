@@ -1,0 +1,47 @@
+import JSZip from 'jszip';
+import { CAMPOS_PIAR, MATERIAS_PIAR } from './modelosPiar';
+import type { DocumentoPiar, FirmaPiar } from './modelosPiar';
+const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+const R='http://schemas.openxmlformats.org/package/2006/relationships';
+const direct=(e:Element,n:string)=>Array.from(e.children).filter(x=>x.namespaceURI===W&&x.localName===n);
+export async function generarPiar(datos:DocumentoPiar,plantilla?:ArrayBuffer):Promise<Blob>{
+ let source = plantilla;
+ if (!source) {
+  const respuesta = await fetch(`${import.meta.env.BASE_URL}plantillas/FORMATO_PIAR_2026.docx`);
+  if (!respuesta.ok) throw new Error('No se encontró la plantilla Word original');
+  source = await respuesta.arrayBuffer();
+ }
+ const zip=await JSZip.loadAsync(source);const parser=new DOMParser();const xml=parser.parseFromString(await zip.file('word/document.xml')!.async('string'),'application/xml');
+ for(const t of Array.from(xml.getElementsByTagNameNS(W,'t')))if(t.textContent)t.textContent=t.textContent.replace(/DD\/MM\/AAAA|DD\/MM\/AA/g,'');
+ const body=xml.getElementsByTagNameNS(W,'body')[0];const tablas=direct(body,'tbl');const parrafos=direct(body,'p');
+ const celda=(t:number,r:number,c:number)=>direct(direct(tablas[t],'tr')[r],'tc')[c];
+ function texto(el:Element,value:string,append=true){if(!append){for(const n of Array.from(el.childNodes))if(!(n instanceof Element)||!['tcPr','pPr'].includes(n.localName))el.removeChild(n);}const p=el.localName==='p'?el:xml.createElementNS(W,'w:p');const run=xml.createElementNS(W,'w:r');const pr=xml.createElementNS(W,'w:rPr');const sz=xml.createElementNS(W,'w:sz');sz.setAttributeNS(W,'w:val','18');pr.appendChild(sz);run.appendChild(pr);value.split('\n').forEach((line,i)=>{if(i)run.appendChild(xml.createElementNS(W,'w:br'));const t=xml.createElementNS(W,'w:t');t.setAttribute('xml:space','preserve');t.textContent=line;run.appendChild(t);});p.appendChild(run);if(p!==el)el.appendChild(p);}
+ for(const campo of CAMPOS_PIAR){const v=datos.campos[campo.clave]??'';if(!v&&!datos.completo)continue;const value=campo.tipo==='date'&&/^\d{4}-\d{2}-\d{2}$/.test(v)?v.split('-').reverse().join('/'):v||'No aplica';if('tabla' in campo&&typeof campo.tabla==='number'){const el=celda(campo.tabla,campo.fila!,campo.celda!);texto(el,campo.clave==='tipo_documento'?`Tipo de documento: ${value}`:campo.clave==='regimen'?`Régimen: ${value}`:campo.reemplazar?`${campo.etiqueta}: ${value}`:value,!(campo.reemplazar||campo.clave==='tipo_documento'||campo.clave==='regimen'));}else if('parrafo' in campo&&typeof campo.parrafo==='number')texto(parrafos[campo.parrafo],value);}
+ // Remove the unselected regime label once the regime answer is populated.
+ if(datos.campos.regimen)texto(celda(2,0,4),'',false);
+ const nombre=`${datos.campos.nombres??''} ${datos.campos.apellidos??''}`.trim()||datos.estudiante.nombre;
+ const institucion=datos.campos.institucion??'';const sede=datos.campos.sede??'';const fecha=String(datos.proceso.iniciado_en??'').slice(0,10).split('-').reverse().join('/');
+ for(const [t,r,c,v] of [[8,1,0,fecha],[8,1,1,institucion],[8,1,2,sede],[9,1,0,nombre],[9,1,1,datos.campos.documento??''],[9,2,0,datos.campos.edad??''],[9,2,1,datos.campos.grado??''],[15,1,0,fecha],[15,1,1,`${institucion} · ${sede}`],[15,2,0,nombre],[15,2,1,datos.campos.documento??''],[15,2,2,`${datos.campos.edad??''} · ${datos.campos.grado??''}`],[15,3,1,datos.firmas.directivo?.nombre??''],[15,4,1,[...new Set(datos.aportes.map(a=>a.docente_nombre))].join('\n')],[15,5,1,datos.firmas.acudiente?.nombre??''],[15,5,2,datos.campos.parentesco??'']] as [number,number,number,string][])texto(celda(t,r,c),v);
+ texto(celda(8,2,0),[...new Set(datos.aportes.map(a=>`${a.docente_nombre} · ${a.firma.cargo||'Docente'}`))].join('\n'));
+ const columnas=['objetivos','barreras','ajustes','evaluacion'] as const;
+ for(const periodo of [1,2,3])for(const materia of MATERIAS_PIAR){for(let c=0;c<4;c++){const partes=datos.aportes.filter(a=>a.periodo===periodo&&a.asignaturas.includes(materia.nombre)).map(a=>`${a.docente_nombre}: ${a.datos[materia.nombre]?.[columnas[c]]??''}`);const v=partes.join('\n\n')||(!datos.materias.includes(materia.nombre)?'No aplica':'');if(v)texto(celda(9+periodo,materia.fila,2+c),v);}}
+ const rels=parser.parseFromString(await zip.file('word/_rels/document.xml.rels')!.async('string'),'application/xml');let sig=1000;
+ function firma(el:Element,f:FirmaPiar|undefined,label:string){if(!f?.imagen)return;const id=sig++;const filename=`piar-firma-${id}.png`;const base64=f.imagen.split(',')[1];zip.file(`word/media/${filename}`,base64,{base64:true});const rel=rels.createElementNS(R,'Relationship');rel.setAttribute('Id',`rIdPiar${id}`);rel.setAttribute('Type','http://schemas.openxmlformats.org/officeDocument/2006/relationships/image');rel.setAttribute('Target',`media/${filename}`);rels.documentElement.appendChild(rel);texto(el,`${label}\n${f.nombre} · ${f.cargo}\nDocumento: ${f.documento}`);const p=el.localName==='p'?el:xml.createElementNS(W,'w:p');const fragment=parser.parseFromString(`<w:r xmlns:w="${W}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><w:drawing><wp:inline><wp:extent cx="1371600" cy="411480"/><wp:docPr id="${id}" name="Firma PIAR ${id}"/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${id}" name="${filename}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdPiar${id}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="1371600" cy="411480"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`,'application/xml');p.appendChild(xml.importNode(fragment.documentElement,true));if(p!==el)el.appendChild(p);}
+ firma(celda(7,0,0),datos.firmas.orientacion,'Valoración de orientación');texto(celda(7,1,0),datos.firmas.orientacion?.cargo??'Orientación');for(const [key,c] of [['evaluador2',1],['evaluador3',2]] as const){firma(celda(7,0,c),datos.firmas[key],'Profesional de valoración');if(datos.firmas[key]?.imagen)texto(celda(7,1,c),datos.firmas[key].cargo);}
+ // Keep the original signature grid and add matching rows only if more actors sign.
+ const sigTable=tablas[14];const originalRows=direct(sigTable,'tr').map(r=>r.cloneNode(true) as Element);const aportes=datos.aportes;
+ for(let start=0;start<aportes.length;start+=3){let row:Element;if(start===0)row=direct(sigTable,'tr')[0];else{row=originalRows[0].cloneNode(true) as Element;sigTable.appendChild(row);sigTable.appendChild(originalRows[1].cloneNode(true));}for(let j=0;j<3;j++){const a=aportes[start+j];if(a){firma(direct(row,'tc')[j],a.firma,`Período ${a.periodo}`);const area=direct(sigTable,'tr')[Math.floor(start/3)*2+1];texto(direct(area,'tc')[j],a.asignaturas.join(', '));}}}
+ function bloqueFirmas(antes:Element,actores:{firma:FirmaPiar|undefined;titulo:string}[],columnas:number){
+  const tabla=xml.createElementNS(W,'w:tbl');const pr=direct(sigTable,'tblPr')[0];if(pr)tabla.appendChild(pr.cloneNode(true));let props=direct(tabla,'tblPr')[0];if(!props){props=xml.createElementNS(W,'w:tblPr');tabla.appendChild(props);}for(const old of Array.from(props.getElementsByTagNameNS(W,'tblBorders')))old.remove();const borders=xml.createElementNS(W,'w:tblBorders');for(const name of ['top','left','bottom','right','insideH','insideV']){const b=xml.createElementNS(W,'w:'+name);b.setAttributeNS(W,'w:val',name==='bottom'?'single':'nil');b.setAttributeNS(W,'w:sz','4');borders.appendChild(b);}props.appendChild(borders);const grid=xml.createElementNS(W,'w:tblGrid');
+  for(let i=0;i<columnas;i++){const c=xml.createElementNS(W,'w:gridCol');c.setAttributeNS(W,'w:w',String(Math.floor(9600/columnas)));grid.appendChild(c);}tabla.appendChild(grid);
+  for(let i=0;i<actores.length;i+=columnas){const row=xml.createElementNS(W,'w:tr');for(let j=0;j<columnas;j++){const tc=direct(originalRows[0],'tc')[0].cloneNode(true) as Element;texto(tc,'',false);const tcpr=direct(tc,'tcPr')[0];const width=tcpr?.getElementsByTagNameNS(W,'tcW')[0];if(width)width.setAttributeNS(W,'w:w',String(Math.floor(9600/columnas)));const a=actores[i+j];if(a)firma(tc,a.firma,a.titulo);row.appendChild(tc);}tabla.appendChild(row);}
+  body.insertBefore(tabla,antes);body.removeChild(antes);
+ }
+ bloqueFirmas(parrafos[102],[{firma:datos.firmas.estudiante,titulo:'Estudiante'},{firma:datos.firmas.acudiente,titulo:'Acudiente / familia'}],2);
+ const ultimos=new Map<string,typeof aportes[number]>();for(const a of aportes)ultimos.set(a.docente_perfil_id,a);
+ bloqueFirmas(parrafos[105],[...ultimos.values()].map(a=>({firma:a.firma,titulo:'Docente'})),2);
+ bloqueFirmas(parrafos[108],[{firma:datos.firmas.directivo,titulo:'Directivo docente'}],1);
+ for(const h of Array.from(xml.getElementsByTagNameNS(W,'trHeight')))if(h.getAttributeNS(W,'hRule')==='exact')h.setAttributeNS(W,'w:hRule','atLeast');
+ const serializer=new XMLSerializer();zip.file('word/document.xml',serializer.serializeToString(xml));zip.file('word/_rels/document.xml.rels',serializer.serializeToString(rels));
+ return new Blob([await zip.generateAsync({type:'arraybuffer'})],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}

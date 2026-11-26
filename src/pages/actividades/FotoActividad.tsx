@@ -1,0 +1,3 @@
+import { useEffect,useState } from 'react';
+import { descargarActividad } from './archivosActividades';
+export default function FotoActividad({blob,ruta,nombre}:{blob?:Blob;ruta?:string;nombre:string}){const [url,setUrl]=useState('');const [error,setError]=useState(false);useEffect(()=>{let activa=true;let u='';void Promise.resolve(blob??(ruta?descargarActividad(ruta):null)).then(b=>{if(!activa||!b)return;u=URL.createObjectURL(b);setUrl(u);setError(false);}).catch(()=>{if(activa)setError(true);});return()=>{activa=false;if(u)URL.revokeObjectURL(u);};},[blob,ruta]);return url?<img src={url} alt={nombre}/>:<span>{error?'No se pudo cargar la fotografía':!blob&&!ruta?'Fotografía pendiente de subida':'Cargando fotografía…'}</span>;}

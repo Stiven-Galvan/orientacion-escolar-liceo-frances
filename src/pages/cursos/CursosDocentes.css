@@ -1,0 +1,51 @@
+.cursos-modulo { display:grid; gap:22px; }
+.cursos-panel { padding:24px; }
+.cursos-modulo label { display:grid; gap:8px; font-size:14px; font-weight:600; }
+.cursos-modulo input,.cursos-modulo select { width:100%; box-sizing:border-box; border:1px solid #becfc3; border-radius:9px; padding:10px 12px; min-height:44px; font:inherit; background:white; color:#234332; }
+.cursos-formularios { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.cursos-formularios form { display:grid; gap:18px; margin-top:20px; }
+.cursos-formularios button { justify-self:start; }
+.cursos-cabecera { display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap; }
+.cursos-cabecera>label:not(.cursos-check) { max-width:200px; }
+.cursos-modulo .cursos-check { display:flex; align-items:center; gap:10px; }
+.cursos-check input { width:18px; height:18px; min-height:0; }
+.cursos-etiquetas { display:flex; gap:10px; flex-wrap:wrap; }
+.cursos-etiquetas span { padding:9px 14px; border-radius:10px; background:#eff5ed; color:#35543c; }
+.cursos-modulo button:disabled { opacity:.55; cursor:not-allowed; }
+.cursos-modulo :focus-visible { outline:3px solid #98baa4; outline-offset:2px; }
+@media(max-width:750px) { .cursos-formularios { grid-template-columns:1fr; } .cursos-panel { padding:18px; } }
+
+.cursos-rango { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.cursos-seleccion { min-width:0; border:1px solid #d4e2d7; border-radius:10px; padding:16px; }
+.cursos-seleccion legend { font-weight:600; padding:0 6px; }
+.cursos-controles { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.cursos-opciones { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; max-height:260px; overflow:auto; }
+.cursos-modulo .cursos-opcion { display:flex; align-items:center; gap:9px; border:1px solid #e0e9dd; padding:10px; border-radius:8px; }
+.cursos-opcion input { width:18px; height:18px; min-height:0; flex-shrink:0; }
+.cursos-resumen { padding:16px; border-radius:10px; background:#f3f7ef; line-height:1.5; }
+.cursos-resumen p { font-size:13px; color:#5d725f; }
+
+.cursos-excepciones { display:grid; gap:16px; border-color:#ddc5a9; background:#fffaf3; }
+.cursos-excluidos { background:#fff0ec; }
+.cursos-excluidos .cursos-etiquetas span { background:#fce1d8; color:#863d2c; }
+
+.cursos-borrar { display:block; margin-top:8px; padding:5px 8px; border:1px solid #ddb2a5; border-radius:6px; color:#943d2b; background:#fff2ee; cursor:pointer; }
+
+.asignaciones-desplegable>summary { cursor:pointer; padding:12px 0; color:#234332; }
+.asignaciones-desplegable>summary>span { display:inline-flex; flex-direction:column; gap:6px; vertical-align:middle; margin-left:8px; }
+.asignaciones-desplegable>summary strong { font-size:23px; }
+.asignaciones-desplegable small { font-size:13px; font-weight:400; color:#586e61; line-height:1.5; }
+.asignaciones-contenido { padding-top:18px; }
+.asignaciones-filtros { display:grid; grid-template-columns:2fr 1fr 1fr; gap:14px; }
+.asignaciones-herramientas { margin:18px 0; }
+.asignaciones-docentes { display:grid; gap:10px; }
+.asignaciones-docente { border:1px solid #d5e2d9; border-radius:12px; overflow:hidden; }
+.asignaciones-toggle { display:flex; justify-content:space-between; align-items:center; width:100%; gap:16px; padding:16px; border:0; background:#f0f6f1; text-align:left; cursor:pointer; font:inherit; color:#234332; }
+.asignaciones-toggle:hover { background:#e5efe7; }
+.asignaciones-toggle>span:first-child { display:grid; gap:5px; }
+.asignaciones-toggle[aria-expanded="true"] { background:#e0ece3; }
+.asignaciones-tabla { max-height:330px; overflow:auto; overscroll-behavior:contain; }
+.asignaciones-tabla table { width:100%; min-width:480px; }
+.asignaciones-tabla thead th { position:sticky; top:0; z-index:1; background:#edf4ee; }
+.asignaciones-paginacion { display:flex; gap:14px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:18px; }
+@media(max-width:750px) { .asignaciones-filtros { grid-template-columns:1fr; } .asignaciones-desplegable>summary small { max-width:230px; } }
